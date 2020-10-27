@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Services;
+using Afip.ServicioWeb.Dominio;
 using Afip.ServicioWeb.Models;
 using Afip.ServicioWeb.ServiciosBD;
 
@@ -30,7 +31,35 @@ namespace Afip.ServicioWeb.ServiciosWeb
         {
             return _IfeServicio.ObtenerBeneficiarios();
         }
-        
+
+        [WebMethod]
+        public string AgregarUnBeneficiaroConParametros(string preCuil, string documento, string postCuil, string apellido, string nombre)
+        {
+            if (preCuil == "" || documento == "" || postCuil == "" || apellido == "" || nombre == "")
+                return "Alguno de los datos para el Alta no fueron proporcionados";
+            
+            int number;
+            if (!int.TryParse(preCuil, out number) || !int.TryParse(documento, out number) || !int.TryParse(postCuil, out number))
+                return "El formato de uno de los datos ingresados no es valido";
+
+            var beneficiario = new BeneficiarioIFE()
+            {
+                PreCuil = int.Parse(preCuil),
+                Documento = int.Parse(documento),
+                PostCuil = int.Parse(postCuil),
+                Apellido = apellido,
+                Nombre = nombre
+            };
+            _IfeServicio.AgregarNuevoBeneficiario(beneficiario);
+            return "Exito!.";
+        }
+
+        [WebMethod]
+        public string AgregarUnBeneficiaroConClase(BeneficiarioIFE beneficiario)
+        {
+            return "succes";
+        }
+
         [WebMethod]
         public string VerificarIFEPorDocumento(string documento)
         {
